@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lazy Studios — Dash Stars</title>
+
+<style>
+:root{
+  --bg:#0f0420;
+  --panel:#11a0b2b;
+  --accent:#9b59ff;
+  --accent-2:#7a39ff;
+  --muted:#bda9e8;
+  --card:#1f1330;
+  --white:#ffffff;
+}
+
+/* RESET */
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Inter,system-ui;
+  background:linear-gradient(180deg,var(--bg),#0d0620 80%);
+  color:white;
+  min-height:100vh;
+  overflow-x:hidden;
+  display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:72px;
+  background:linear-gradient(180deg,var(--panel),#12041a);
+  padding:18px 8px;
+  position:fixed;top:0;bottom:0;left:0;
+  box-shadow:4px 0 18px rgba(0,0,0,.6);
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+}
+.logo{font-size:26px;}
+.menu-icons a{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;justify-content:center;align-items:center;
+  color:var(--muted);text-decoration:none;
+  transition:.15s;
+}
+.menu-icons a:hover{
+  background:rgba(255,255,255,.05);
+  transform:translateY(-3px);
+  color:white;
+}
+
+/* HEADER */
+header{
+  height:72px;
+  width:100%;
+  position:fixed;
+  left:72px;top:0;right:0;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:0 22px;
+  backdrop-filter:blur(6px);
+}
+
+.site-title{
+  font-size:22px;
+  font-weight:800;
+  color:white;
+}
+
+header input{
+  flex:1;
+  max-width:520px;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  outline:none;
+  background:#1b0f28;
+  color:var(--muted);
+}
+
+/* Login Button */
+.login-btn{
+  background:linear-gradient(180deg,var(--accent),var(--accent-2));
+  padding:10px 14px;
+  border-radius:10px;
+  border:none;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .12s ease;
+}
+.login-btn:active{ transform:scale(.95) }
+
+/* Profile Circle */
+.profile-circle{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  background-size:cover;
+  background-position:center;
+  display:none;
+  cursor:pointer;
+  border:2px solid var(--accent);
+  transition:.3s ease;
+  position:relative;
+}
+.profile-circle:hover{
+  transform:scale(1.07);
+  box-shadow:0 0 12px var(--accent);
+}
+
+/* Tooltip Username */
+.profile-circle::after{
+  content:attr(data-username);
+  position:absolute;
+  background:#1f1330;
+  padding:6px 10px;
+  border-radius:6px;
+  bottom:-38px;
+  right:0;
+  opacity:0;
+  pointer-events:none;
+  color:var(--muted);
+  font-size:13px;
+  transition:.2s;
+}
+.profile-circle:hover::after{
+  opacity:1;
+}
+
+/* PROFILE MENU */
+.profile-menu{
+  position:absolute;
+  top:70px;
+  right:22px;
+  width:160px;
+  background:#1f1330;
+  padding:12px;
+  border-radius:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,.6);
+  display:none;
+  animation:fade .25s ease;
+}
+.profile-menu button{
+  width:100%;
+  padding:10px;
+  background:#ff5577;
+  border:none;
+  border-radius:8px;
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* MAIN */
+main{
+  margin-left:92px;
+  margin-top:92px;
+  padding:30px;
+  width:100%;
+}
+
+.big-title{font-size:36px;font-weight:800}
+.subtitle{color:var(--muted);margin-top:6px;font-size:14px}
+
+.hero{display:flex;gap:26px;align-items:center}
+
+.game-row{margin-top:20px;display:flex;gap:18px}
+
+.game-card{
+  min-width:240px;
+  background:var(--card);
+  padding:12px;border-radius:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,.6);
+  transition:.15s;
+}
+.game-card:hover{ transform:translateY(-8px) }
+.game-card img{width:100%;border-radius:8px}
+
+.btn{
+  margin-top:12px;
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  background:linear-gradient(180deg,var(--accent),var(--accent-2));
+  font-weight:800;
+  color:white;
+}
+
+/* LOGIN POPUP */
+.modal{
+  display:none;
+  position:fixed;top:0;bottom:0;left:0;right:0;
+  background:rgba(0,0,0,.7);
+  justify-content:center;align-items:center;
+  z-index:200;
+}
+.modal-box{
+  width:340px;background:#1a0b2b;padding:26px;
+  border-radius:12px;text-align:center;
+}
+.modal-box input{
+  width:100%;padding:10px;border-radius:10px;
+  background:#12041a;border:none;color:white;
+  margin-top:10px;
+}
+.close-btn{
+  width:100%;margin-top:14px;padding:10px;
+  border:none;border-radius:10px;
+  font-weight:700;background:#ff5577;color:white;
+  cursor:pointer;
+}
+
+/* FADE-IN ANIMATION */
+.fade-in{
+  animation:fade .5s ease forwards;
+}
+@keyframes fade{
+  from{opacity:0;transform:scale(.95)}
+  to{opacity:1;transform:scale(1)}
+}
+
+.lazy-watermark{
+  position:fixed;right:12px;bottom:12px;color:var(--muted);
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">🎮</div>
+  <div class="menu-icons">
+    <a href="#">🏠</a>
+    <a href="#">🔥</a>
+    <a href="#">⭐</a>
+    <a href="#">🎲</a>
+    <a href="#">⚙️</a>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="site-title">Lazy Studios</div>
+
+  <input type="search" placeholder="Search games…">
+
+  <button class="login-btn" id="loginButton" onclick="openLogin()">Log In</button>
+
+  <!-- PROFILE CIRCLE -->
+  <div id="profilePic" class="profile-circle" data-username=""></div>
+
+  <!-- PROFILE MENU -->
+  <div id="profileMenu" class="profile-menu">
+    <button onclick="signOut()">Sign Out</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+  <div class="hero">
+    <div>
+      <div class="big-title">Dash Stars</div>
+      <div class="subtitle">Fast-paced dash action game.</div>
+    </div>
+
+    <img src="dashstars.png" width="380" style="border-radius:12px">
+  </div>
+
+  <div class="game-row">
+    <div class="game-card">
+      <img src="dashstars.png">
+      <h3>Dash Stars</h3>
+      <p>A fast dash survival game.</p>
+
+      <button class="btn" onclick="downloadGame()">Download</button>
+    </div>
+  </div>
+</main>
+
+<div class="lazy-watermark">Lazy Studios</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div class="modal-box fade-in">
+    <h2>Sign In / Sign Up</h2>
+
+    <input id="email" type="email" placeholder="Enter Gmail">
+    <input id="password" type="password" placeholder="Password (min 4 chars)">
+    <input id="username" type="text" placeholder="Set Username">
+
+    <button class="btn" onclick="loginOrCreate()">Continue</button>
+    <button class="close-btn" onclick="closeLogin()">Cancel</button>
+  </div>
+</div>
+
+<script>
+function openLogin(){ document.getElementById("loginModal").style.display="flex"; }
+function closeLogin(){ document.getElementById("loginModal").style.display="none"; }
+
+/* LOGIN + SIGNUP */
+function loginOrCreate(){
+  let email = emailInput.value.trim();
+  let pass  = passInput.value.trim();
+  let user  = userInput.value.trim();
+
+  if(!email.endsWith("@gmail.com")){
+    alert("Use a real Gmail.");
+    return;
+  }
+  if(pass.length < 4){
+    alert("Password must be at least 4 characters.");
+    return;
+  }
+
+  let accounts = JSON.parse(localStorage.getItem("accounts") || "{}");
+
+  if(accounts[email]){
+    if(accounts[email].password !== pass){
+      alert("Wrong password.");
+      return;
+    }
+  } else {
+    accounts[email] = {
+      password:pass,
+      username:user || "Player"
+    };
+  }
+
+  localStorage.setItem("accounts", JSON.stringify(accounts));
+  localStorage.setItem("currentUser", email);
+
+  closeLogin();
+  applyLoginUI();
+}
+
+/* APPLY LOGIN UI */
+function applyLoginUI(){
+  const userEmail = localStorage.getItem("currentUser");
+  if(!userEmail) return;
+
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
+  const username = accounts[userEmail].username;
+
+  document.getElementById("loginButton").style.display="none";
+
+  const profile = document.getElementById("profilePic");
+  profile.style.display="block";
+  profile.setAttribute("data-username", username);
+
+  profile.style.backgroundImage =
+    "url('https://i.pinimg.com/originals/54/72/d1/5472d1b09d3d724228109d381d617326.jpg')";
+
+  profile.classList.add("fade-in");
+}
+
+/* PROFILE MENU TOGGLE */
+document.getElementById("profilePic").onclick = function(){
+  let menu = document.getElementById("profileMenu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+};
+
+/* SIGN OUT */
+function signOut(){
+  localStorage.removeItem("currentUser");
+
+  document.getElementById("profileMenu").style.display="none";
+  document.getElementById("profilePic").style.display="none";
+  document.getElementById("loginButton").style.display="block";
+
+  alert("Signed out!");
+}
+
+/* DOWNLOAD PROTECTION */
+function downloadGame(){
+  if(!localStorage.getItem("currentUser")){
+    alert("Sign in first!");
+    openLogin();
+    return;
+  }
+
+  /* ✅ UPDATED LINK */
+  window.open("https://drive.google.com/file/d/1PB93lupGBWOKYIa9KSDMZudlSU4zjv15/view?usp=sharing", "_blank");
+}
+
+window.onload = applyLoginUI;
+</script>
+
+</body>
+</html>
