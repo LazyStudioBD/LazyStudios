@@ -1,5 +1,5 @@
 function downloadGame() {
-    window.location.href = "https://drive.google.com/file/d/1dGkqlfRFcKa80TqAa6qLqlC-6AZcHClU/view?usp=sharing";
+    window.location.href = "https://drive.google.com/file/d/1PB93lupGBWOKYIa9KSDMZudlSU4zjv15/view";
 }
 document.getElementById("profilePic").onclick = function(){
   let menu = document.getElementById("profileMenu");
